@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_ai_finance" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.ai.finance</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="90"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="AI Finance" string="AI Finance" name="test_AI_finance">
+                    <block title="AI Configuration">
+                        <setting string="OCR AI Credential" help="Credential for OCR/VLM Service">
+                            <field name="ocr_credential_id"/>
+                        </setting>
+                    </block>
+                    <block title="Virtual CFO">
+                        <setting string="Virtual CFO Credential" help="Credential for AI Chat">
+                            <field name="virtual_cfo_credential_id"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_ai_finance_config_settings" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'module': 'test_AI_finance'}</field>
+    </record>
+</odoo>

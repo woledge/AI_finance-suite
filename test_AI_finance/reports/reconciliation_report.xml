@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ==================== PARTNER STATEMENT REPORT ==================== -->
+    <record id="action_report_vendor_statement" model="ir.actions.report">
+        <field name="name">Partner Reconciliation Report</field>
+        <field name="model">test.ai.vendor.statement</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">test_AI_finance.report_vendor_statement</field>
+        <field name="report_file">test_AI_finance.report_vendor_statement</field>
+        <field name="print_report_name">'Reconciliation_%s_%s' % (object.partner_id.name, object.statement_date)</field>
+        <field name="binding_model_id" ref="model_test_ai_vendor_statement"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_vendor_statement">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <!-- HEADER -->
+                        <h2 style="color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 10px;">
+                            Partner Reconciliation Report
+                        </h2>
+                        <div style="margin-bottom: 20px;">
+                            <table class="table table-sm" style="width: 60%;">
+                                <tr><td style="font-weight: bold; width: 40%;">Reference</td><td><t t-esc="o.name"/></td></tr>
+                                <tr><td style="font-weight: bold;">Partner</td><td><t t-esc="o.partner_id.name"/></td></tr>
+                                <tr><td style="font-weight: bold;">Statement Date</td><td><t t-esc="o.statement_date" t-options="{'widget': 'date'}"/></td></tr>
+                                <tr t-if="o.date_from"><td style="font-weight: bold;">Period</td><td><t t-esc="o.date_from" t-options="{'widget': 'date'}"/> - <t t-esc="o.date_to" t-options="{'widget': 'date'}"/></td></tr>
+                                <tr><td style="font-weight: bold;">Currency</td><td><t t-esc="o.currency_id.name"/></td></tr>
+                                <tr><td style="font-weight: bold;">Status</td><td><t t-esc="dict(o._fields['state'].selection).get(o.state)"/></td></tr>
+                            </table>
+                        </div>
+
+                        <!-- BALANCE SUMMARY -->
+                        <h4 style="color: #2c3e50; margin-top: 20px;">Balance Summary</h4>
+                        <table class="table table-bordered" style="width: 50%;">
+                            <tr style="background-color: #ecf0f1;">
+                                <td style="font-weight: bold;">Statement Total Due</td>
+                                <td style="text-align: right;"><t t-esc="o.statement_total_due" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold;">Odoo Total Due</td>
+                                <td style="text-align: right;"><t t-esc="o.odoo_total_due" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                            </tr>
+                            <tr t-att-style="'background-color: %s;' % ('rgba(231,76,60,0.13)' if o.difference_amount != 0 else 'rgba(39,174,96,0.13)')">
+                                <td style="font-weight: bold;">Difference</td>
+                                <td style="text-align: right; font-weight: bold;"><t t-esc="o.difference_amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                            </tr>
+                        </table>
+
+                        <!-- RECONCILIATION SUMMARY -->
+                        <h4 style="color: #2c3e50; margin-top: 20px;">Reconciliation Summary</h4>
+                        <table class="table table-bordered" style="width: 60%;">
+                            <thead>
+                                <tr style="background-color: #34495e; color: white;">
+                                    <th>Category</th><th style="text-align: center;">Count</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Total Lines</td><td style="text-align: center;"><t t-esc="o.summary_total_lines"/></td></tr>
+                                <tr style="background-color: rgba(39,174,96,0.13);"><td>Matched</td><td style="text-align: center; font-weight: bold; color: #27ae60;"><t t-esc="o.summary_matched"/></td></tr>
+                                <tr t-if="o.summary_discrepancy"><td>Discrepancies</td><td style="text-align: center; color: #e74c3c;"><t t-esc="o.summary_discrepancy"/></td></tr>
+                                <tr t-if="o.summary_missing_odoo"><td>Missing in Odoo</td><td style="text-align: center; color: #e74c3c;"><t t-esc="o.summary_missing_odoo"/></td></tr>
+                                <tr t-if="o.summary_missing_stmt"><td>Missing in Statement</td><td style="text-align: center; color: #f39c12;"><t t-esc="o.summary_missing_stmt"/></td></tr>
+                                <tr t-if="o.summary_unresolved"><td>Unresolved</td><td style="text-align: center; color: #e74c3c;"><t t-esc="o.summary_unresolved"/></td></tr>
+                                <tr style="background-color: rgba(52,152,219,0.13);">
+                                    <td style="font-weight: bold;">Match Rate</td>
+                                    <td style="text-align: center; font-weight: bold; color: #3498db;"><t t-esc="'%.1f' % o.summary_match_rate"/>%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- DETAILED LINES -->
+                        <h4 style="color: #2c3e50; margin-top: 30px;">Detailed Line Items</h4>
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr style="background-color: #34495e; color: white; font-size: 11px;">
+                                    <th>Date</th>
+                                    <th>Description</th>
+                                    <th>Voucher</th>
+                                    <th style="text-align: right;">Statement Amt</th>
+                                    <th style="text-align: right;">Odoo Balance</th>
+                                    <th>Matched Odoo Entry</th>
+                                    <th>Status</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="o.line_ids" t-as="line">
+                                    <tr t-att-style="'font-size: 10px; background-color: %s;' % {'matched': 'rgba(39,174,96,0.08)', 'discrepancy': 'rgba(231,76,60,0.08)', 'missing_in_odoo': 'rgba(231,76,60,0.06)', 'missing_in_statement': 'rgba(243,156,18,0.06)'}.get(line.match_status, 'white')">
+                                        <td><t t-esc="line.date" t-options="{'widget': 'date'}"/></td>
+                                        <td><t t-esc="line.name"/></td>
+                                        <td><t t-esc="line.voucher_number"/></td>
+                                        <td style="text-align: right;"><t t-esc="line.amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                                        <td style="text-align: right;"><t t-esc="line.odoo_amount_residual" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                                        <td><t t-esc="line.matched_move_line_id.display_name or '-'"/></td>
+                                        <td><t t-esc="dict(line._fields['match_status'].selection).get(line.match_status)"/></td>
+                                        <td style="font-size: 9px;"><t t-esc="line.match_notes or ''"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <!-- FOOTER -->
+                        <div style="margin-top: 30px; padding-top: 10px; border-top: 1px solid #bdc3c7; font-size: 10px; color: #7f8c8d;">
+                            Generated on <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/>
+                            | AI Finance Module
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- ==================== BANK STATEMENT REPORT ==================== -->
+    <record id="action_report_bank_statement" model="ir.actions.report">
+        <field name="name">Bank Reconciliation Report</field>
+        <field name="model">test.ai.bank.statement</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">test_AI_finance.report_bank_statement</field>
+        <field name="report_file">test_AI_finance.report_bank_statement</field>
+        <field name="print_report_name">'BankRecon_%s_%s' % (object.bank_name or 'Bank', object.date_to)</field>
+        <field name="binding_model_id" ref="model_test_ai_bank_statement"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_bank_statement">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <!-- HEADER -->
+                        <h2 style="color: #2c3e50; border-bottom: 3px solid #2ecc71; padding-bottom: 10px;">
+                            Bank Statement Reconciliation Report
+                        </h2>
+                        <div style="margin-bottom: 20px;">
+                            <table class="table table-sm" style="width: 60%;">
+                                <tr><td style="font-weight: bold; width: 40%;">Reference</td><td><t t-esc="o.name"/></td></tr>
+                                <tr><td style="font-weight: bold;">Bank Name</td><td><t t-esc="o.bank_name or '-'"/></td></tr>
+                                <tr><td style="font-weight: bold;">Account Number</td><td><t t-esc="o.account_number or '-'"/></td></tr>
+                                <tr><td style="font-weight: bold;">Bank Account</td><td><t t-esc="o.bank_account_id.display_name"/></td></tr>
+                                <tr><td style="font-weight: bold;">Period</td><td><t t-esc="o.date_from" t-options="{'widget': 'date'}"/> - <t t-esc="o.date_to" t-options="{'widget': 'date'}"/></td></tr>
+                                <tr><td style="font-weight: bold;">Currency</td><td><t t-esc="o.currency_id.name"/></td></tr>
+                                <tr><td style="font-weight: bold;">Status</td><td><t t-esc="dict(o._fields['state'].selection).get(o.state)"/></td></tr>
+                            </table>
+                        </div>
+
+                        <!-- BALANCE SUMMARY -->
+                        <h4 style="color: #2c3e50; margin-top: 20px;">Balance Summary</h4>
+                        <table class="table table-bordered" style="width: 50%;">
+                            <tr style="background-color: #ecf0f1;">
+                                <td style="font-weight: bold;">Opening Balance</td>
+                                <td style="text-align: right;"><t t-esc="o.opening_balance" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold;">Closing Balance</td>
+                                <td style="text-align: right;"><t t-esc="o.closing_balance" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold;">Odoo Balance</td>
+                                <td style="text-align: right;"><t t-esc="o.odoo_balance" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                            </tr>
+                            <tr t-att-style="'background-color: %s;' % ('rgba(231,76,60,0.13)' if o.difference != 0 else 'rgba(39,174,96,0.13)')">
+                                <td style="font-weight: bold;">Difference</td>
+                                <td style="text-align: right; font-weight: bold;"><t t-esc="o.difference" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                            </tr>
+                        </table>
+
+                        <!-- RECONCILIATION SUMMARY -->
+                        <h4 style="color: #2c3e50; margin-top: 20px;">Reconciliation Summary</h4>
+                        <table class="table table-bordered" style="width: 60%;">
+                            <thead>
+                                <tr style="background-color: #34495e; color: white;">
+                                    <th>Category</th><th style="text-align: center;">Count</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Total Lines</td><td style="text-align: center;"><t t-esc="o.summary_total_lines"/></td></tr>
+                                <tr style="background-color: rgba(39,174,96,0.13);"><td>Matched</td><td style="text-align: center; font-weight: bold; color: #27ae60;"><t t-esc="o.summary_matched"/></td></tr>
+                                <tr t-if="o.summary_discrepancy"><td>Discrepancies</td><td style="text-align: center; color: #e74c3c;"><t t-esc="o.summary_discrepancy"/></td></tr>
+                                <tr t-if="o.summary_missing_odoo"><td>Missing in Odoo</td><td style="text-align: center; color: #e74c3c;"><t t-esc="o.summary_missing_odoo"/></td></tr>
+                                <tr t-if="o.summary_missing_bank"><td>Missing in Bank</td><td style="text-align: center; color: #f39c12;"><t t-esc="o.summary_missing_bank"/></td></tr>
+                                <tr t-if="o.summary_unresolved"><td>Unresolved</td><td style="text-align: center; color: #e74c3c;"><t t-esc="o.summary_unresolved"/></td></tr>
+                                <tr style="background-color: rgba(52,152,219,0.13);">
+                                    <td style="font-weight: bold;">Match Rate</td>
+                                    <td style="text-align: center; font-weight: bold; color: #3498db;"><t t-esc="'%.1f' % o.summary_match_rate"/>%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- DETAILED LINES -->
+                        <h4 style="color: #2c3e50; margin-top: 30px;">Detailed Line Items</h4>
+                        <table class="table table-sm table-bordered">
+                            <thead>
+                                <tr style="background-color: #34495e; color: white; font-size: 11px;">
+                                    <th>Date</th>
+                                    <th>Description</th>
+                                    <th style="text-align: right;">Debit</th>
+                                    <th style="text-align: right;">Credit</th>
+                                    <th style="text-align: right;">Balance</th>
+                                    <th>Matched Odoo Entry</th>
+                                    <th>Status</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="o.line_ids" t-as="line">
+                                    <tr t-att-style="'font-size: 10px; background-color: %s;' % {'matched': 'rgba(39,174,96,0.08)', 'ambiguous': 'rgba(243,156,18,0.08)', 'missing_in_odoo': 'rgba(231,76,60,0.06)', 'missing_in_bank': 'rgba(243,156,18,0.06)'}.get(line.match_status, 'white')">
+                                        <td><t t-esc="line.date" t-options="{'widget': 'date'}"/></td>
+                                        <td><t t-esc="line.description"/></td>
+                                        <td style="text-align: right;"><t t-esc="line.debit" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                                        <td style="text-align: right;"><t t-esc="line.credit" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                                        <td style="text-align: right;"><t t-esc="line.balance" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                                        <td><t t-esc="line.matched_move_line_id.display_name or '-'"/></td>
+                                        <td><t t-esc="dict(line._fields['match_status'].selection).get(line.match_status)"/></td>
+                                        <td style="font-size: 9px;"><t t-esc="line.match_notes or ''"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <!-- FOOTER -->
+                        <div style="margin-top: 30px; padding-top: 10px; border-top: 1px solid #bdc3c7; font-size: 10px; color: #7f8c8d;">
+                            Generated on <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/>
+                            | AI Finance Module
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

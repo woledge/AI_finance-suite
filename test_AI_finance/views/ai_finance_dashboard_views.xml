@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ==================== DASHBOARD FORM VIEW ==================== -->
+    <record id="view_ai_finance_dashboard_form" model="ir.ui.view">
+        <field name="name">test.ai.finance.dashboard.form</field>
+        <field name="model">test.ai.finance.dashboard</field>
+        <field name="arch" type="xml">
+            <form string="AI Finance Dashboard" create="false" delete="false" duplicate="false">
+                <header>
+                    <button name="action_refresh" string="🔄 Refresh Data" type="object" class="btn-primary"/>
+                    <button name="action_period_this_month" string="This Month" type="object" class="btn-secondary"/>
+                    <button name="action_period_last_month" string="Last Month" type="object" class="btn-secondary"/>
+                    <button name="action_period_this_quarter" string="This Quarter" type="object" class="btn-secondary"/>
+                    <button name="action_period_this_year" string="This Year" type="object" class="btn-secondary"/>
+                </header>
+                <sheet>
+                    <!-- ==================== TITLE ==================== -->
+                    <div class="oe_title">
+                        <h1 style="font-size: 1.8em; font-weight: bold;">
+                            <span class="fa fa-dashboard"/> AI Finance Dashboard
+                        </h1>
+                    </div>
+
+                    <!-- ==================== SMART ALERTS ==================== -->
+                    <div class="mb-3">
+                        <field name="alert_html" nolabel="1" readonly="1"/>
+                    </div>
+
+                    <!-- ==================== DATE FILTERS ==================== -->
+                    <group string="📅 Period Filter">
+                        <group>
+                            <field name="date_from"/>
+                        </group>
+                        <group>
+                            <field name="date_to"/>
+                        </group>
+                    </group>
+
+                    <!-- ==================== KEY METRICS ==================== -->
+                    <group string="📊 Key Financial Indicators">
+                        <group string="Revenue &amp; Profitability">
+                            <field name="total_sales" widget="monetary"/>
+                            <field name="total_purchases" widget="monetary"/>
+                            <field name="gross_profit" widget="monetary"
+                                   decoration-success="gross_profit &gt; 0"
+                                   decoration-danger="gross_profit &lt; 0"/>
+                            <field name="profit_margin" widget="percentage"
+                                   decoration-success="profit_margin &gt; 0"
+                                   decoration-danger="profit_margin &lt; 0"/>
+                            <field name="sales_trend" widget="percentage" string="Sales Trend ↗"
+                                   decoration-success="sales_trend &gt; 0"
+                                   decoration-danger="sales_trend &lt; 0"/>
+                            <field name="purchases_trend" widget="percentage" string="Purchases Trend"
+                                   decoration-success="purchases_trend &lt; 0"
+                                   decoration-danger="purchases_trend &gt; 0"/>
+                        </group>
+                        <group string="Collection &amp; Payment">
+                            <field name="collection_rate" widget="progressbar"/>
+                            <field name="payment_rate" widget="progressbar"/>
+                        </group>
+                    </group>
+
+                    <!-- ==================== RECEIVABLES & PAYABLES ==================== -->
+                    <group string="💰 Receivables &amp; Payables">
+                        <group string="Customer Receivables (Debts)">
+                            <field name="total_receivable" widget="monetary"/>
+                            <field name="invoices_to_collect"/>
+                            <field name="total_overdue_receivable" widget="monetary"
+                                   decoration-danger="total_overdue_receivable &gt; 0"/>
+                            <field name="receivable_trend"/>
+                            <button name="action_open_receivables" string="📋 View Open Invoices" type="object"
+                                    class="btn-outline-primary" icon="fa-list"/>
+                            <button name="action_open_overdue" string="⚠ View Overdue" type="object"
+                                    class="btn-outline-danger" icon="fa-exclamation-triangle"
+                                    invisible="total_overdue_receivable == 0"/>
+                        </group>
+                        <group string="Vendor Payables (Bills)">
+                            <field name="total_payable" widget="monetary"/>
+                            <field name="bills_to_pay"/>
+                            <field name="total_overdue_payable" widget="monetary"
+                                   decoration-danger="total_overdue_payable &gt; 0"/>
+                            <button name="action_open_payables" string="📋 View Open Bills" type="object"
+                                    class="btn-outline-primary" icon="fa-list"/>
+                        </group>
+                    </group>
+
+                    <!-- Reduced duplicate sections. See Analytics Dashboard. -->
+
+
+                    <field name="company_id" invisible="1"/>
+                    <field name="currency_id" invisible="1"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ==================== SERVER ACTION (opens singleton) ==================== -->
+    <record id="action_ai_finance_dashboard" model="ir.actions.server">
+        <field name="name">Analytics</field>
+        <field name="model_id" ref="model_test_ai_finance_dashboard"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_open_dashboard()</field>
+    </record>
+</odoo>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+    <!-- Dashboard Template Placeholder -->
+    <t t-name="test_AI_finance.Dashboard">
+        <div class="o_ai_finance_dashboard">
+            <h2>AI Finance Dashboard</h2>
+            <p>Dashboard will be implemented in future phases.</p>
+        </div>
+    </t>
+</templates>

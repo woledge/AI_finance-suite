@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="test_ai_finance.Analytics" owl="1">
+        <div class="ai_analytics_dashboard w-100 h-100 overflow-auto pb-5" style="background: var(--o-view-background-color, #1a1d23);">
+            <!-- Loading -->
+            <t t-if="state.loading">
+                <div class="d-flex justify-content-center align-items-center" style="min-height:400px;">
+                    <div class="spinner-border text-primary" style="width:3rem;height:3rem;"/>
+                </div>
+            </t>
+            <t t-if="!state.loading and state.data">
+                <!-- ==================== HEADER ==================== -->
+                <div class="px-4 py-3 mb-0 d-flex justify-content-between align-items-center border-bottom" style="background:var(--o-card-background-color,#212529);">
+                    <div>
+                        <h2 class="m-0 fw-bold" style="color:#a78bfa;"><i class="fa fa-area-chart me-2"/>Finance Analytics</h2>
+                        <small class="text-muted">Interactive charts &amp; advanced insights</small>
+                    </div>
+                    <button class="btn btn-outline-light btn-sm" t-on-click="onRefresh"><i class="fa fa-refresh me-1"/>Refresh</button>
+                </div>
+
+                <!-- ==================== FILTER BAR ==================== -->
+                <div class="px-4 py-2 d-flex flex-wrap align-items-center gap-2 border-bottom" style="background:var(--o-card-background-color,#212529);">
+                    <!-- Period Presets -->
+                    <div class="btn-group btn-group-sm me-2">
+                        <button t-attf-class="btn {{state.period === 'this_month' ? 'btn-primary' : 'btn-outline-secondary'}}" t-on-click="() => this.onPeriodChange('this_month')">This Month</button>
+                        <button t-attf-class="btn {{state.period === 'last_month' ? 'btn-primary' : 'btn-outline-secondary'}}" t-on-click="() => this.onPeriodChange('last_month')">Last Month</button>
+                        <button t-attf-class="btn {{state.period === 'this_quarter' ? 'btn-primary' : 'btn-outline-secondary'}}" t-on-click="() => this.onPeriodChange('this_quarter')">This Quarter</button>
+                        <button t-attf-class="btn {{state.period === 'this_year' ? 'btn-primary' : 'btn-outline-secondary'}}" t-on-click="() => this.onPeriodChange('this_year')">This Year</button>
+                        <button t-attf-class="btn {{state.period === 'all' ? 'btn-primary' : 'btn-outline-secondary'}}" t-on-click="() => this.onPeriodChange('all')">All Time</button>
+                    </div>
+
+                    <!-- Partner Filter -->
+                    <select class="form-select form-select-sm" style="max-width:220px;background:rgba(255,255,255,0.05);color:inherit;border-color:rgba(255,255,255,0.15);" t-on-change="onPartnerChange">
+                        <option value="">All Partners</option>
+                        <t t-foreach="state.partners" t-as="p" t-key="p.id">
+                            <option t-att-value="p.id" t-att-selected="state.partner_id === p.id"><t t-esc="p.name"/></option>
+                        </t>
+                    </select>
+
+                    <!-- Journal Filter -->
+                    <select class="form-select form-select-sm" style="max-width:200px;background:rgba(255,255,255,0.05);color:inherit;border-color:rgba(255,255,255,0.15);" t-on-change="onJournalChange">
+                        <option value="">All Journals</option>
+                        <t t-foreach="state.journals" t-as="j" t-key="j.id">
+                            <option t-att-value="j.id" t-att-selected="state.journal_id === j.id"><t t-esc="j.name"/></option>
+                        </t>
+                    </select>
+
+                    <!-- Clear Filters -->
+                    <t t-if="state.partner_id || state.journal_id || state.period !== 'this_year'">
+                        <button class="btn btn-outline-danger btn-sm" t-on-click="clearFilters"><i class="fa fa-times me-1"/>Clear</button>
+                    </t>
+                </div>
+
+                <div class="container-fluid px-4 mt-3">
+                    <!-- ==================== ALERTS ==================== -->
+                    <div class="mb-4">
+                        <t t-foreach="state.data.alerts" t-as="alert" t-key="alert_index">
+                            <div t-attf-class="alert-bar alert-{{alert.type}}">
+                                <b><t t-esc="alert.icon"/> </b> <t t-esc="alert.text"/>
+                            </div>
+                        </t>
+                    </div>
+
+                    <!-- ==================== KPI CARDS ==================== -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-6 col-xl-3">
+                            <div class="kpi-card p-3 h-100 shadow-sm" style="background:var(--o-card-background-color,#212529);border-left:4px solid #a78bfa;">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <small class="text-muted text-uppercase fw-bold">Total Sales</small>
+                                    <div class="kpi-icon" style="background:rgba(167,139,250,0.15);color:#a78bfa;"><i class="fa fa-line-chart"/></div>
+                                </div>
+                                <h3 class="fw-bold mt-2 mb-1"><t t-esc="state.data.currency_symbol"/> <t t-esc="fmt(state.data.kpis.total_sales)"/></h3>
+                                <small t-attf-class="{{state.data.trends.sales_trend >= 0 ? 'text-success' : 'text-danger'}}">
+                                    <i t-attf-class="fa fa-arrow-{{state.data.trends.sales_trend >= 0 ? 'up' : 'down'}}"/>
+                                    <t t-esc="Math.abs(state.data.trends.sales_trend).toFixed(1)"/>%
+                                </small>
+                            </div>
+                        </div>
+                        <div class="col-6 col-xl-3">
+                            <div class="kpi-card p-3 h-100 shadow-sm" style="background:var(--o-card-background-color,#212529);border-left:4px solid #51cf66;">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <small class="text-muted text-uppercase fw-bold">Gross Profit</small>
+                                    <div class="kpi-icon" style="background:rgba(81,207,102,0.15);color:#51cf66;"><i class="fa fa-money"/></div>
+                                </div>
+                                <h3 class="fw-bold mt-2 mb-1"><t t-esc="state.data.currency_symbol"/> <t t-esc="fmt(state.data.kpis.gross_profit)"/></h3>
+                                <small t-attf-class="{{state.data.kpis.profit_margin >= 0 ? 'text-success' : 'text-danger'}}">
+                                    Margin: <t t-esc="state.data.kpis.profit_margin.toFixed(1)"/>%
+                                </small>
+                            </div>
+                        </div>
+                        <div class="col-6 col-xl-3">
+                            <div class="kpi-card clickable p-3 h-100 shadow-sm" style="background:var(--o-card-background-color,#212529);border-left:4px solid #ffd43b;" t-on-click="openReceivables">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <small class="text-muted text-uppercase fw-bold">To Collect</small>
+                                    <div class="kpi-icon" style="background:rgba(255,212,59,0.15);color:#ffd43b;"><i class="fa fa-sign-in"/></div>
+                                </div>
+                                <h3 class="fw-bold mt-2 mb-1"><t t-esc="state.data.currency_symbol"/> <t t-esc="fmt(state.data.kpis.total_receivable)"/></h3>
+                                <small t-attf-class="{{state.data.kpis.total_overdue_receivable > 0 ? 'text-danger' : 'text-success'}}">
+                                    Overdue: <t t-esc="fmt(state.data.kpis.total_overdue_receivable)"/>
+                                </small>
+                            </div>
+                        </div>
+                        <div class="col-6 col-xl-3">
+                            <div class="kpi-card clickable p-3 h-100 shadow-sm" style="background:var(--o-card-background-color,#212529);border-left:4px solid #ff6b6b;" t-on-click="openPayables">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <small class="text-muted text-uppercase fw-bold">To Pay</small>
+                                    <div class="kpi-icon" style="background:rgba(255,107,107,0.15);color:#ff6b6b;"><i class="fa fa-sign-out"/></div>
+                                </div>
+                                <h3 class="fw-bold mt-2 mb-1"><t t-esc="state.data.currency_symbol"/> <t t-esc="fmt(state.data.kpis.total_payable)"/></h3>
+                                <small t-attf-class="{{state.data.kpis.total_overdue_payable > 0 ? 'text-danger' : 'text-success'}}">
+                                    Overdue: <t t-esc="fmt(state.data.kpis.total_overdue_payable)"/>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ==================== 2nd KPI ROW: Net Cash + Performance ==================== -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-6 col-xl-3">
+                            <div class="kpi-card clickable p-3 h-100 shadow-sm" style="background:var(--o-card-background-color,#212529);border-left:4px solid #017E84;" t-on-click="openBankJournals">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <small class="text-muted text-uppercase fw-bold">Net Cash</small>
+                                    <div class="kpi-icon" style="background:rgba(1,126,132,0.15);color:#017E84;"><i class="fa fa-university"/></div>
+                                </div>
+                                <h3 t-attf-class="fw-bold mt-2 mb-1 {{state.data.kpis.net_cash_position >= 0 ? '' : 'text-danger'}}"><t t-esc="state.data.currency_symbol"/> <t t-esc="fmt(state.data.kpis.net_cash_position)"/></h3>
+                                <small class="text-muted">Bank - Payables</small>
+                            </div>
+                        </div>
+                        <div class="col-6 col-xl-3">
+                            <div class="kpi-card p-3 h-100 shadow-sm" style="background:var(--o-card-background-color,#212529);border-left:4px solid #6ea8fe;">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <small class="text-muted text-uppercase fw-bold">Collection Rate</small>
+                                    <div class="kpi-icon" style="background:rgba(110,168,254,0.15);color:#6ea8fe;"><i class="fa fa-percent"/></div>
+                                </div>
+                                <h3 class="fw-bold mt-2 mb-1"><t t-esc="state.data.kpis.collection_rate.toFixed(1)"/>%</h3>
+                                <div class="progress mt-1" style="height:5px;background:rgba(255,255,255,0.05);">
+                                    <div class="progress-bar" t-attf-style="width:{{Math.min(state.data.kpis.collection_rate, 100)}}%;background:#6ea8fe;"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-xl-3">
+                            <div class="kpi-card p-3 h-100 shadow-sm" style="background:var(--o-card-background-color,#212529);border-left:4px solid #51cf66;">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <small class="text-muted text-uppercase fw-bold">Payment Rate</small>
+                                    <div class="kpi-icon" style="background:rgba(81,207,102,0.15);color:#51cf66;"><i class="fa fa-percent"/></div>
+                                </div>
+                                <h3 class="fw-bold mt-2 mb-1"><t t-esc="state.data.kpis.payment_rate.toFixed(1)"/>%</h3>
+                                <div class="progress mt-1" style="height:5px;background:rgba(255,255,255,0.05);">
+                                    <div class="progress-bar" t-attf-style="width:{{Math.min(state.data.kpis.payment_rate, 100)}}%;background:#51cf66;"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-xl-3">
+                            <div class="kpi-card p-3 h-100 shadow-sm" style="background:var(--o-card-background-color,#212529);border-left:4px solid #a78bfa;">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <small class="text-muted text-uppercase fw-bold">AI Processed</small>
+                                    <div class="kpi-icon" style="background:rgba(167,139,250,0.15);color:#a78bfa;"><i class="fa fa-magic"/></div>
+                                </div>
+                                <h3 class="fw-bold mt-2 mb-1"><t t-esc="state.data.stats.ocr_processed"/></h3>
+                                <small class="text-muted">OCR docs / <span style="color:#51cf66;"><t t-esc="state.data.stats.reconciled"/></span> reconciled</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ==================== CHARTS ROW 1: Sales + Capital ==================== -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-12 col-xl-8">
+                            <div class="chart-card p-3 shadow-sm h-100" style="background:var(--o-card-background-color,#212529);">
+                                <h6 class="fw-bold mb-3"><i class="fa fa-bar-chart me-2" style="color:#a78bfa;"/>Sales vs Purchases (6 Months)</h6>
+                                <div style="position:relative;height:280px;"><canvas t-ref="salesChart"/></div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-xl-4">
+                            <div class="chart-card p-3 shadow-sm h-100" style="background:var(--o-card-background-color,#212529);">
+                                <h6 class="fw-bold mb-3"><i class="fa fa-pie-chart me-2" style="color:#a78bfa;"/>Capital Map</h6>
+                                <div style="position:relative;height:200px;"><canvas t-ref="capitalChart"/></div>
+                                <div class="mt-3 small">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span><span class="d-inline-block rounded-circle me-1" style="width:8px;height:8px;background:#017E84;"/>Bank</span>
+                                        <span class="fw-bold"><t t-esc="state.data.currency_symbol"/> <t t-esc="fmt(state.data.capital_map.bank)"/></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span><span class="d-inline-block rounded-circle me-1" style="width:8px;height:8px;background:#F4A261;"/>Receivable</span>
+                                        <span class="fw-bold"><t t-esc="state.data.currency_symbol"/> <t t-esc="fmt(state.data.capital_map.receivable)"/></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span><span class="d-inline-block rounded-circle me-1" style="width:8px;height:8px;background:#E76F51;"/>Prepaid</span>
+                                        <span class="fw-bold"><t t-esc="state.data.currency_symbol"/> <t t-esc="fmt(state.data.capital_map.prepaid)"/></span>
+                                    </div>
+                                    <div class="d-flex justify-content-between pt-1 border-top mt-1">
+                                        <span class="fw-bold">Total</span>
+                                        <span class="fw-bold" style="color:#a78bfa;"><t t-esc="state.data.currency_symbol"/> <t t-esc="fmt(state.data.capital_map.total)"/></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ==================== CHARTS ROW 2: Aging + Cash Flow ==================== -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-12 col-xl-6">
+                            <div class="chart-card p-3 shadow-sm h-100" style="background:var(--o-card-background-color,#212529);">
+                                <h6 class="fw-bold mb-3"><i class="fa fa-clock-o me-2" style="color:#ffd43b;"/>Receivable Aging (Stacked)</h6>
+                                <div style="position:relative;height:140px;"><canvas t-ref="agingChart"/></div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-xl-6">
+                            <div class="chart-card p-3 shadow-sm h-100" style="background:var(--o-card-background-color,#212529);">
+                                <h6 class="fw-bold mb-3"><i class="fa fa-line-chart me-2" style="color:#51cf66;"/>Cash Flow Forecast</h6>
+                                <div style="position:relative;height:140px;"><canvas t-ref="cashFlowChart"/></div>
+                                <div class="row mt-2">
+                                    <div class="col-6 cash-stat">
+                                        <div class="cash-label">Expected Collections (30d)</div>
+                                        <div class="cash-value text-success"><t t-esc="state.data.currency_symbol"/> <t t-esc="fmt(state.data.cash_flow.collections_30)"/></div>
+                                    </div>
+                                    <div class="col-6 cash-stat">
+                                        <div class="cash-label">Expected Payments (30d)</div>
+                                        <div class="cash-value text-danger"><t t-esc="state.data.currency_symbol"/> <t t-esc="fmt(state.data.cash_flow.payments_30)"/></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ==================== TOP 5 LISTS ==================== -->
+                    <div class="row g-3 mb-4">
+                        <!-- Top 5 Customers -->
+                        <div class="col-12 col-xl-4">
+                            <div class="chart-card p-3 shadow-sm h-100" style="background:var(--o-card-background-color,#212529);">
+                                <h6 class="fw-bold mb-3"><i class="fa fa-trophy me-2" style="color:#ffd43b;"/>Top 5 Customers</h6>
+                                <table class="top-list-table">
+                                    <thead><tr><th>#</th><th>Customer</th><th class="text-end">Revenue</th></tr></thead>
+                                    <tbody>
+                                        <t t-foreach="state.data.top_customers" t-as="c" t-key="c_index">
+                                            <tr>
+                                                <td><t t-esc="c_index + 1"/></td>
+                                                <td><b><t t-esc="c.name"/></b></td>
+                                                <td class="text-end fw-bold" style="color:#51cf66;"><t t-esc="fmt(c.amount)"/></td>
+                                            </tr>
+                                        </t>
+                                        <t t-if="!state.data.top_customers.length"><tr><td colspan="3" class="text-center text-muted py-3">No data</td></tr></t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- Top 5 Overdue -->
+                        <div class="col-12 col-xl-4">
+                            <div class="chart-card p-3 shadow-sm h-100" style="background:var(--o-card-background-color,#212529);">
+                                <h6 class="fw-bold mb-3"><i class="fa fa-exclamation-triangle me-2" style="color:#ff6b6b;"/>Top 5 Overdue</h6>
+                                <table class="top-list-table">
+                                    <thead><tr><th>#</th><th>Customer</th><th class="text-center">Inv</th><th class="text-end">Overdue</th></tr></thead>
+                                    <tbody>
+                                        <t t-foreach="state.data.top_overdue" t-as="o" t-key="o_index">
+                                            <tr>
+                                                <td><t t-esc="o_index + 1"/></td>
+                                                <td><b><t t-esc="o.name"/></b></td>
+                                                <td class="text-center"><t t-esc="o.count"/></td>
+                                                <td class="text-end fw-bold" style="color:#ff6b6b;"><t t-esc="fmt(o.amount)"/></td>
+                                            </tr>
+                                        </t>
+                                        <t t-if="!state.data.top_overdue.length"><tr><td colspan="4" class="text-center text-muted py-3">✅ No overdue</td></tr></t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- Top 5 Vendors -->
+                        <div class="col-12 col-xl-4">
+                            <div class="chart-card p-3 shadow-sm h-100" style="background:var(--o-card-background-color,#212529);">
+                                <h6 class="fw-bold mb-3"><i class="fa fa-truck me-2" style="color:#6ea8fe;"/>Top 5 Vendors</h6>
+                                <table class="top-list-table">
+                                    <thead><tr><th>#</th><th>Vendor</th><th class="text-end">Spend</th></tr></thead>
+                                    <tbody>
+                                        <t t-foreach="state.data.top_vendors" t-as="v" t-key="v_index">
+                                            <tr>
+                                                <td><t t-esc="v_index + 1"/></td>
+                                                <td><b><t t-esc="v.name"/></b></td>
+                                                <td class="text-end fw-bold" style="color:#6ea8fe;"><t t-esc="fmt(v.amount)"/></td>
+                                            </tr>
+                                        </t>
+                                        <t t-if="!state.data.top_vendors.length"><tr><td colspan="3" class="text-center text-muted py-3">No data</td></tr></t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </div>
+    </t>
+</templates>

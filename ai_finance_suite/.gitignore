@@ -1,0 +1,20 @@
+# Python
+*.pyc
+*.pyo
+__pycache__/
+*.pot
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Environment
+.env
+venv/
+env/
+.pytest_cache/
+
+# Temporary upload artifacts (never commit user-uploaded files)
+uploads/
+tmp/

@@ -1,0 +1,16 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_af_virtual_cfo_agent,af.virtual.cfo.agent,model_af_virtual_cfo_agent,base.group_user,1,1,1,1
+access_af_cfo_conversation,af.cfo.conversation,model_af_cfo_conversation,base.group_user,1,1,1,1
+access_af_vendor_bill_wizard,af.vendor.bill.wizard,model_af_vendor_bill_wizard,base.group_user,1,1,1,1
+access_af_cfo_query_wizard,af.cfo.query.wizard,model_af_cfo_query_wizard,base.group_user,1,1,1,1
+access_af_vendor_bill_wizard_line,af.vendor.bill.wizard.line,model_af_vendor_bill_wizard_line,base.group_user,1,1,1,1
+access_af_credential_user,af.credential,model_af_credential,account.group_account_manager,1,1,1,1
+access_af_credential_admin,af.credential,model_af_credential,base.group_system,1,1,1,1
+access_af_refund_tracking,af.refund.tracking,model_af_refund_tracking,base.group_user,1,1,1,1
+access_af_vendor_statement,af.vendor.statement,model_af_vendor_statement,base.group_user,1,1,1,1
+access_af_vendor_statement_line,af.vendor.statement.line,model_af_vendor_statement_line,base.group_user,1,1,1,1
+access_af_bank_statement,af.bank.statement,model_af_bank_statement,base.group_user,1,1,1,1
+access_af_bank_statement_line,af.bank.statement.line,model_af_bank_statement_line,base.group_user,1,1,1,1
+access_af_vendor_bill_wizard_column,af.vendor.bill.wizard.column,model_af_vendor_bill_wizard_column,base.group_user,1,1,1,1
+access_af_vendor_statement_column,af.vendor.statement.column,model_af_vendor_statement_column,base.group_user,1,1,1,1
+access_af_finance_dashboard,af.finance.dashboard,model_af_finance_dashboard,base.group_user,1,1,1,1

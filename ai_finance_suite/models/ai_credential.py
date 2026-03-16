@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 import requests
@@ -24,7 +24,7 @@ class AICredential(models.Model):
         ('custom', 'Custom / Self-Hosted'),
     ], string='AI Provider', required=True, default='gemini')
     
-    api_key = fields.Char(string='API Key', groups='base.group_system')
+    api_key = fields.Char(string='API Key', groups='account.group_account_manager,base.group_system')
     
     api_base_url = fields.Char(
         string='API Base URL',

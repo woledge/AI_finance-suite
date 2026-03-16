@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>AI Finance Suite — by Woledge</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; color: #333; margin: 0; padding: 0; background: #fff; }
+        .hero { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: #fff; padding: 60px 40px; text-align: center; }
+        .hero h1 { font-size: 2.8em; margin: 0 0 10px; font-weight: 700; letter-spacing: -1px; }
+        .hero h1 span { color: #00d4ff; }
+        .hero p { font-size: 1.2em; opacity: 0.85; max-width: 700px; margin: 0 auto 30px; }
+        .badge { display: inline-block; background: rgba(0,212,255,0.15); border: 1px solid #00d4ff; color: #00d4ff; border-radius: 20px; padding: 5px 18px; font-size: 0.85em; margin: 4px; }
+        .section { max-width: 960px; margin: 0 auto; padding: 50px 30px; }
+        .section-title { font-size: 1.7em; font-weight: 700; color: #0f3460; border-left: 5px solid #00d4ff; padding-left: 15px; margin-bottom: 30px; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+        .feature-card { background: #f8faff; border: 1px solid #e0e8f8; border-radius: 12px; padding: 28px; transition: box-shadow 0.2s; }
+        .feature-card:hover { box-shadow: 0 4px 20px rgba(15,52,96,0.12); }
+        .feature-card .icon { font-size: 2.2em; margin-bottom: 14px; }
+        .feature-card h3 { font-size: 1.1em; font-weight: 700; color: #0f3460; margin: 0 0 10px; }
+        .feature-card p { font-size: 0.93em; color: #555; margin: 0; line-height: 1.6; }
+        .feature-card ul { font-size: 0.9em; color: #555; padding-left: 18px; margin: 8px 0 0; line-height: 1.8; }
+        .providers { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; }
+        .provider-pill { background: #eef3ff; border: 1px solid #c8d8ff; border-radius: 8px; padding: 8px 18px; font-size: 0.88em; font-weight: 600; color: #0f3460; }
+        .requirements-box { background: #f0f9ff; border: 1px solid #b8e0f8; border-radius: 12px; padding: 28px 32px; }
+        .requirements-box code { background: #e8f4fd; border-radius: 4px; padding: 2px 7px; font-size: 0.9em; color: #0f3460; }
+        .requirements-box pre { background: #1a1a2e; color: #00d4ff; border-radius: 8px; padding: 16px 20px; font-size: 0.88em; overflow-x: auto; }
+        .steps { counter-reset: step; }
+        .step { display: flex; gap: 20px; margin-bottom: 24px; align-items: flex-start; }
+        .step-num { counter-increment: step; min-width: 40px; height: 40px; background: #0f3460; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1em; flex-shrink: 0; }
+        .step-body h4 { margin: 0 0 6px; font-size: 1em; font-weight: 700; color: #0f3460; }
+        .step-body p { margin: 0; font-size: 0.92em; color: #555; line-height: 1.6; }
+        .about { background: linear-gradient(135deg, #0f3460, #16213e); color: #fff; padding: 50px 30px; text-align: center; }
+        .about h2 { font-size: 1.8em; margin: 0 0 12px; }
+        .about p { opacity: 0.85; max-width: 600px; margin: 0 auto 20px; font-size: 1em; line-height: 1.7; }
+        .about a { color: #00d4ff; text-decoration: none; font-weight: 600; }
+        .divider { border: none; border-top: 2px solid #eef0f8; margin: 0; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.92em; }
+        table th { background: #0f3460; color: #fff; padding: 12px 16px; text-align: left; }
+        table td { padding: 11px 16px; border-bottom: 1px solid #eef0f8; }
+        table tr:nth-child(even) td { background: #f8faff; }
+    </style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+    <h1>AI <span>Finance</span> Suite</h1>
+    <p>Six production-ready AI tools — OCR Engine, Virtual CFO, Smart Dashboard, Reconciliation, Credential Manager &amp; Refund Tracker — in a single Odoo 19 install.</p>
+    <span class="badge">Odoo 19</span>
+    <span class="badge">Community &amp; Enterprise</span>
+    <span class="badge">9 AI Providers</span>
+    <span class="badge">Arabic &amp; English</span>
+    <span class="badge">$249 USD</span>
+</div>
+
+<!-- FEATURES -->
+<div class="section">
+    <div class="section-title">What's Inside</div>
+    <div class="features-grid">
+
+        <div class="feature-card">
+            <div class="icon">🔍</div>
+            <h3>AI OCR Engine</h3>
+            <p>Extract structured data from any financial document using Vision AI.</p>
+            <ul>
+                <li>Vendor Bills, Invoices, Credit Notes</li>
+                <li>Partner &amp; Bank Statements (PDF + Excel)</li>
+                <li>3-step wizard: Upload → Review → Post</li>
+                <li>Smart duplicate detection</li>
+                <li>Auto-creates partners, products &amp; taxes</li>
+            </ul>
+        </div>
+
+        <div class="feature-card">
+            <div class="icon">🤖</div>
+            <h3>Virtual CFO Chatbot</h3>
+            <p>Your AI financial advisor, available 24/7 inside Odoo.</p>
+            <ul>
+                <li>Plain Arabic &amp; English queries</li>
+                <li>Live Odoo data context injection (RAG)</li>
+                <li>13 financial domains: GL, budget, taxes, trends…</li>
+                <li>ChatGPT-style chat with session history</li>
+                <li>Persistent conversation memory</li>
+            </ul>
+        </div>
+
+        <div class="feature-card">
+            <div class="icon">📊</div>
+            <h3>AI Finance Dashboard</h3>
+            <p>Live financial intelligence at a glance — no manual reports.</p>
+            <ul>
+                <li>8 real-time KPI cards</li>
+                <li>4 interactive Chart.js visualizations</li>
+                <li>Cash Flow Forecast (30 / 60 / 90 days)</li>
+                <li>AR Aging Analysis (4 time buckets)</li>
+                <li>Smart AI alerts for anomalies</li>
+            </ul>
+        </div>
+
+        <div class="feature-card">
+            <div class="icon">⚖️</div>
+            <h3>Smart Reconciliation</h3>
+            <p>Automated matching between your records and external documents.</p>
+            <ul>
+                <li>Partner statement vs. Odoo open items</li>
+                <li>Bank statement vs. journal entries</li>
+                <li>4-priority matching algorithm</li>
+                <li>±3-day date tolerance for bank lines</li>
+                <li>QWeb PDF audit reports</li>
+            </ul>
+        </div>
+
+        <div class="feature-card">
+            <div class="icon">🔐</div>
+            <h3>AI Credentials Manager</h3>
+            <p>Enterprise-grade API key management for all your AI providers.</p>
+            <ul>
+                <li>Centralized multi-provider config</li>
+                <li>Role-based access (Accounting Managers)</li>
+                <li>One-click Test Connection per provider</li>
+                <li>Optional data anonymization</li>
+                <li>Per-provider model selection</li>
+            </ul>
+        </div>
+
+        <div class="feature-card">
+            <div class="icon">↩️</div>
+            <h3>Refund Tracker</h3>
+            <p>Track vendor credit notes from request through to receipt.</p>
+            <ul>
+                <li>Full lifecycle: Pending → Requested → Credited</li>
+                <li>OCR-powered credit memo scanning</li>
+                <li>Automatic days-pending computation</li>
+                <li>Linked to original vendor bills</li>
+            </ul>
+        </div>
+
+    </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- AI PROVIDERS -->
+<div class="section">
+    <div class="section-title">Supported AI Providers</div>
+    <div class="providers">
+        <div class="provider-pill">Google Gemini</div>
+        <div class="provider-pill">OpenAI GPT-4o</div>
+        <div class="provider-pill">Anthropic Claude</div>
+        <div class="provider-pill">xAI Grok</div>
+        <div class="provider-pill">Mistral AI</div>
+        <div class="provider-pill">Cohere</div>
+        <div class="provider-pill">Groq</div>
+        <div class="provider-pill">DeepSeek</div>
+        <div class="provider-pill">Custom / Self-Hosted (Ollama, LM Studio)</div>
+    </div>
+    <p style="margin-top:18px; color:#555; font-size:0.93em;">
+        Bring your own API key from any provider. Google Gemini free tier is the recommended starting point — no paid plan required to evaluate the module.
+    </p>
+</div>
+
+<hr class="divider"/>
+
+<!-- REQUIREMENTS -->
+<div class="section">
+    <div class="section-title">Requirements</div>
+    <div class="requirements-box">
+        <table>
+            <tr>
+                <th>Item</th>
+                <th>Details</th>
+            </tr>
+            <tr>
+                <td><strong>Odoo Version</strong></td>
+                <td>19.0 Community or Enterprise</td>
+            </tr>
+            <tr>
+                <td><strong>Python Libraries</strong></td>
+                <td><code>groq</code> &nbsp;<code>openai</code> &nbsp;<code>google-genai</code> &nbsp;<code>pandas</code> &nbsp;<code>openpyxl</code> &nbsp;<code>requests</code> &nbsp;<code>rapidfuzz</code></td>
+            </tr>
+            <tr>
+                <td><strong>AI Provider</strong></td>
+                <td>At least one API key (Google Gemini free tier recommended)</td>
+            </tr>
+        </table>
+        <p style="margin-top:16px; font-size:0.9em; color:#555;">Install all Python dependencies with:</p>
+        <pre>pip install -r requirements.txt</pre>
+    </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- INSTALLATION -->
+<div class="section">
+    <div class="section-title">Installation</div>
+    <div class="steps">
+
+        <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+                <h4>Download &amp; Place the Module</h4>
+                <p>Download the zip from the Odoo Apps Store. Extract the <code>ai_finance_suite</code> folder and place it in your Odoo addons directory (or upload via Odoo.sh).</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+                <h4>Install Python Dependencies</h4>
+                <p>On your server, run: <code>pip install -r requirements.txt</code> from inside the module folder. All third-party AI SDKs and utility libraries are listed there.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-body">
+                <h4>Activate Developer Mode &amp; Update App List</h4>
+                <p>In Odoo, go to <strong>Settings → Activate Developer Mode</strong>, then <strong>Apps → Update Apps List</strong>.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-body">
+                <h4>Install AI Finance Suite</h4>
+                <p>Search for <em>"AI Finance"</em> in the Apps list and click <strong>Install</strong>.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-num">5</div>
+            <div class="step-body">
+                <h4>Add Your AI Credential</h4>
+                <p>Go to <strong>AI Finance → AI Credentials</strong>, create a new credential record, select your provider, enter your API key, and click <strong>Test Connection</strong> to verify.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-num">6</div>
+            <div class="step-body">
+                <h4>Configure Module Settings</h4>
+                <p>Go to <strong>Settings → AI Finance</strong> and assign your OCR Credential and Virtual CFO Credential. You're ready to go.</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- ABOUT -->
+<div class="about">
+    <h2>Built by Woledge</h2>
+    <p>Woledge is an administrative and financial consulting company specializing in ERP implementation, financial systems automation, and professional training.</p>
+    <p>
+        <a href="https://www.woledge.com">www.woledge.com</a> &nbsp;·&nbsp;
+        <a href="mailto:info@woledge.com">info@woledge.com</a>
+    </p>
+    <p style="opacity:0.6; font-size:0.85em; margin-top:20px;">AI Finance Suite v19.0.1.0.0 · License: LGPL-3</p>
+</div>
+
+</body>
+</html>

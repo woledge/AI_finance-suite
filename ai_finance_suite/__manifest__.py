@@ -142,7 +142,7 @@ Website: https://www.woledge.com
             'ai_finance_suite/static/src/xml/ai_dashboard.xml',
         ],
     },
-    'images': ['static/description/banner.png'],
+    'images': ['static/description/banner.png', 'static/description/icon.png'],
     'installable': True,
     'application': True,
     'auto_install': False,

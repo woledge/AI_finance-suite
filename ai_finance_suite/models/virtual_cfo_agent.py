@@ -1,4 +1,4 @@
-﻿"""
+"""
 Virtual CFO Agent - المدير المالي الافتراضي
 ==========================================
 
@@ -18,6 +18,7 @@ from odoo.exceptions import UserError
 import logging
 import json
 import time
+import requests
 
 _logger = logging.getLogger(__name__)
 

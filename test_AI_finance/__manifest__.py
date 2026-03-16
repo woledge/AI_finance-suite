@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'AI Finance V1',
-    'version': '1.8',
+    'name': 'AI Finance',
+    'version': '19.0.1.8',
+    'website': 'woledge.com'
     'category': 'Accounting/Finance',
     'summary': 'Advanced AI Finance Module: Virtual CFO & OCR Engine',
     'description': """

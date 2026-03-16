@@ -211,8 +211,6 @@ This module is licensed under [LGPL-3](https://www.gnu.org/licenses/lgpl-3.0.en.
 
 For issues, feature requests, or questions:
 - Open an issue on GitHub
-- Email: support@ai-finance-suite.com
+- Email: woledge21@gmail.com
 
----
 
-*Built with ❤️ for the Odoo community. Powered by Google Gemini, OpenAI, Claude, Groq, and more.*

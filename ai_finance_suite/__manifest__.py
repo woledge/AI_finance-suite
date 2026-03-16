@@ -147,6 +147,6 @@ Website: https://www.woledge.com
     'application': True,
     'auto_install': False,
     'license': 'LGPL-3',
-    'price': 249.00,
+    'price': 390.00,
     'currency': 'USD',
 }

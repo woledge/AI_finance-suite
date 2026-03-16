@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<odoo>
-    <record id="action_ai_finance_analytics" model="ir.actions.client">
-        <field name="name">Dashboard</field>
-        <field name="tag">test_ai_finance.analytics_action</field>
-        <field name="target">main</field>
-    </record>
-</odoo>
